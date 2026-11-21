@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bài 6: Sử dụng phần mềm khi được phép</title>
+<style>
+  :root{
+    --primary:#1d4ed8;
+    --primary-dark:#1e3a8a;
+    --teal:#0f766e;
+    --amber:#d97706;
+    --rose:#e11d48;
+    --green:#16a34a;
+    --purple:#7e22ce;
+    --bg:#f0f6ff;
+    --card:#ffffff;
+    --text:#1e293b;
+    --muted:#64748b;
+    --border:#dbeafe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .container{max-width:1040px;margin:0 auto;padding:18px}
+
+  header.hero{
+    background:linear-gradient(125deg,#1d4ed8 0%,#0284c7 55%,#0f766e 100%);
+    color:#fff;padding:22px 26px;border-radius:18px;box-shadow:0 10px 25px rgba(29,78,216,.18);
+  }
+  header.hero .tag{display:inline-block;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.3px;margin-bottom:8px}
+  header.hero h1{margin:0 0 6px;font-size:24px;line-height:1.3}
+  header.hero p{margin:0;opacity:.94;font-size:14.5px}
+
+  .tracker-bar{
+    position:sticky;top:8px;z-index:50;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(6px);
+    border:2px solid #93c5fd;border-radius:16px;padding:12px 16px;margin:14px 0;
+    box-shadow:0 8px 20px rgba(15,23,42,.1);
+  }
+  .tracker-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+  .tracker-metrics{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .metric-pill{
+    padding:5px 12px;border-radius:999px;font-size:13.5px;font-weight:800;display:inline-flex;align-items:center;gap:5px;
+  }
+  .m-pct{background:#dbeafe;color:#1e40af}
+  .m-inter{background:#fef3c7;color:#92400e}
+  .m-quiz{background:#f3e8ff;color:#6b21a8}
+  .m-total{background:#dcfce7;color:#15803d;font-size:14.5px}
+  .progress-track{width:100%;height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#0d9488,#16a34a);transition:width .35s ease;border-radius:999px}
+  .tracker-sub{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:#475569;margin-top:6px}
+  .tracker-sub span.done-item{color:#15803d;font-weight:700}
+
+  .nav-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  @media(max-width:720px){.nav-tabs{grid-template-columns:repeat(2,1fr)}}
+  .tab-btn{
+    border:2px solid #cbd5e1;background:#fff;color:#334155;padding:11px 10px;border-radius:14px;
+    font:inherit;font-weight:700;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;
+  }
+  .tab-btn span.step-num{font-size:12px;text-transform:uppercase;color:var(--primary);background:#eff6ff;padding:2px 9px;border-radius:999px}
+  .tab-btn:hover{border-color:#93c5fd;transform:translateY(-1px)}
+  .tab-btn.active{background:linear-gradient(135deg,#1d4ed8,#0284c7);color:#fff;border-color:#1d4ed8;box-shadow:0 6px 16px rgba(29,78,216,.24)}
+  .tab-btn.active span.step-num{background:rgba(255,255,255,.22);color:#fff}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 3px 10px rgba(15,23,42,.04)}
+  .card h2{margin:0 0 12px;font-size:20px;color:var(--primary-dark);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card h3{margin:14px 0 8px;font-size:17px;color:#0f172a}
+
+  .guide-note{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    background:#eff6ff;border:1px solid #bfdbfe;padding:10px 14px;border-radius:12px;margin-bottom:14px;
+  }
+  .guide-text{font-size:14.5px;color:#1e3a8a;flex:1}
+  .btn{
+    border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;
+    background:var(--primary);color:#fff;transition:all .15s;display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn:hover{filter:brightness(1.06)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn-teal{background:var(--teal)}
+  .btn-amber{background:var(--amber)}
+  .btn-rose{background:var(--rose)}
+  .btn-green{background:var(--green)}
+  .btn-purple{background:var(--purple)}
+  .btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+  .btn-sm{padding:6px 12px;font-size:14px;border-radius:8px}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:780px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  .sgk-fig{background:#fff;border:2px solid #cbd5e1;border-radius:14px;padding:14px 16px;box-shadow:0 3px 8px rgba(15,23,42,.04)}
+  .sgk-fig-caption{text-align:center;font-weight:700;font-size:14px;color:#1e3a8a;margin-top:10px;padding-top:8px;border-top:1px dashed #cbd5e1}
+
+  .lab-box{background:#f8fafc;border:1.5px solid #93c5fd;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+  select,input[type=text]{padding:7px 10px;border:1px solid #94a3b8;border-radius:8px;font:inherit;background:#fff;color:#0f172a}
+  .fb-box{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:14.5px;border:1px solid #cbd5e1;background:#f8fafc}
+
+  .memo-box{background:linear-gradient(135deg,#fefce8,#fffbeb);border:2px solid #fde047;border-radius:14px;padding:16px 18px;margin:10px 0}
+  .memo-box li{margin:8px 0;font-size:16px}
+  .step-list{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px}
+
+  .stars-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0}
+  @media(max-width:600px){.stars-grid{grid-template-columns:repeat(3,1fr)}}
+  .star-btn{
+    background:linear-gradient(145deg,#f59e0b,#d97706);color:#fff;border:0;border-radius:16px;padding:18px 10px;
+    font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 6px 14px rgba(217,119,6,.25);transition:transform .15s;
+  }
+  .star-btn:hover{transform:translateY(-3px)}
+  .star-btn.done{background:#16a34a;box-shadow:none}
+  .candy-bar{background:#fdf2f8;border:1px solid #fbcfe8;color:#9d174d;padding:10px 14px;border-radius:12px;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+
+  .q-card{background:#fff;border:1px solid #dce5f1;border-radius:14px;padding:18px;margin:14px 0}
+  .q-card.q-correct{border-left:6px solid #16a34a}
+  .q-card.q-wrong{border-left:6px solid #dc2626}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;margin-left:6px;vertical-align:middle}
+  .b-nb{background:#dbeafe;color:#1e40af}
+  .b-th{background:#fef3c7;color:#92400e}
+  .b-vd{background:#fce7f3;color:#9d174d}
+  .b-type{background:#e2e8f0;color:#334155}
+  .option{display:block;margin:7px 0;padding:9px 12px;border-radius:9px;border:1px solid #e2e8f0;cursor:pointer;transition:background .15s}
+  .option:hover{background:#eff6ff}
+  .opt-correct{background:#dcfce7 !important;border-color:#86efac !important;color:#14532d;font-weight:700}
+  .opt-wrong{background:#fee2e2 !important;border-color:#fca5a5 !important;color:#7f1d1d;text-decoration:line-through}
+  .tf-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;margin:7px 0;border-radius:9px;background:#f8fafc;border:1px solid #e2e8f0}
+  .tf-choices label{margin-left:14px;font-weight:700;cursor:pointer}
+  .match-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;padding:9px 12px;margin:7px 0;border-radius:9px;background:#f8fafc;border:1px solid #e2e8f0}
+  @media(max-width:620px){.match-row{grid-template-columns:1fr}}
+  .fill-box{padding:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;line-height:2.2;margin-top:8px}
+  .word-bank{margin-top:8px;font-size:14px;color:#334155;background:#eff6ff;padding:7px 12px;border-radius:8px;display:inline-block}
+  .explain-box{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:14.5px;line-height:1.55}
+  .explain-box.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+  .explain-box.bad{background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d}
+  .timer{font-size:22px;font-weight:800;color:var(--teal)}
+  .rank-pill{display:inline-block;padding:5px 14px;border-radius:999px;font-weight:800;font-size:15px}
+  .rank-htt{background:#dcfce7;color:#15803d}
+  .rank-ht{background:#dbeafe;color:#1d4ed8}
+  .rank-cht{background:#fee2e2;color:#b91c1c}
+  .review-item{padding:11px 14px;margin:8px 0;border-radius:10px;border:1px solid #e2e8f0;font-size:15px}
+  .review-item.ok{background:#f0fdf4;border-color:#bbf7d0}
+  .review-item.bad{background:#fef2f2;border-color:#fecaca}
+  .hidden{display:none !important}
+  footer{text-align:center;font-size:13px;color:var(--muted);padding:16px 0}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="hero">
+    <div class="tag">TIN HỌC LỚP 4 • KẾT NỐI TRI THỨC VỚI CUỘC SỐNG • CHỦ ĐỀ 4</div>
+    <h1>Bài 6: Sử dụng phần mềm khi được phép</h1>
+    <p>Hệ thống học tập & Đánh giá toàn diện từ lúc tương tác bài giảng đến trắc nghiệm (100% tiến độ & thang điểm 10)</p>
+  </header>
+
+  <div class="tracker-bar" role="region" aria-label="Bảng theo dõi tiến độ và điểm số">
+    <div class="tracker-top">
+      <div style="font-weight:800;color:#1e3a8a;font-size:15px">📊 Tiến độ tương tác & Điểm đánh giá của em:</div>
+      <div class="tracker-metrics">
+        <span class="metric-pill m-pct" id="ui-pct">Tiến độ bài học: 0%</span>
+        <span class="metric-pill m-inter" id="ui-inter-score">Điểm tương tác: 0.0 / 5.0</span>
+        <span class="metric-pill m-quiz" id="ui-quiz-score">Điểm trắc nghiệm: 0.0 / 5.0</span>
+        <span class="metric-pill m-total" id="ui-total-score">🏆 Tổng điểm: 0.0 / 10</span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="ui-progress-fill"></div>
+    </div>
+    <div class="tracker-sub">
+      <span id="chk-read">⬜ Đọc & Khám phá (10%)</span>
+      <span id="chk-lab1">⬜ Thực hành nhiệm vụ 1 (15%)</span>
+      <span id="chk-lab2">⬜ Thực hành nhiệm vụ 2 (10%)</span>
+      <span id="chk-memo">⬜ Xác nhận Ghi nhớ (10%)</span>
+      <span id="chk-stars">⬜ Ngôi sao may mắn: 0/5 (25%)</span>
+      <span id="chk-quiz">⬜ Nộp bài trắc nghiệm 10 câu (30%)</span>
+    </div>
+  </div>
+
+  <div class="card" style="padding:14px 18px;background:#f8fafc;border-color:#93c5fd">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <div style="font-weight:800;color:#1e3a8a">👩‍🎓 Thông tin học sinh tham gia bài học:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;flex:1;max-width:620px">
+        <input id="stu-name" type="text" maxlength="100" style="flex:2;min-width:180px" placeholder="Nhập Họ và tên của em...">
+        <input id="stu-class" type="text" maxlength="30" style="flex:1;min-width:110px" placeholder="Lớp (VD: 4.2)">
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-tabs" aria-label="Các chặng học tập">
+    <button class="tab-btn active" onclick="switchTab(0)" id="tab-0">
+      <span class="step-num">Chặng 1 (35%)</span>
+      <span>🚀 Khởi động & Khám phá</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab(1)" id="tab-1">
+      <span class="step-num">Chặng 2 (10%)</span>
+      <span>💡 Ghi nhớ & Quy trình</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab(2)" id="tab-2">
+      <span class="step-num">Chặng 3 (25%)</span>
+      <span>⭐ Ngôi sao may mắn</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab(3)" id="tab-3">
+      <span class="step-num">Chặng 4 (30%)</span>
+      <span>📝 Trắc nghiệm (10/40 câu)</span>
+    </button>
+  </nav>
+
+  <section id="stage-0">
+    <div class="card">
+      <h2>🚀 Hoạt động Khởi động & Khám phá: Phần mềm miễn phí, không miễn phí & bản quyền (SGK trang 27–29)</h2>
+      <div class="guide-note">
+        <div class="guide-text"><b>Gợi ý khám phá:</b> Quan sát ví dụ các phần mềm miễn phí và không miễn phí, đọc tình huống của An, Minh, Khoa và hiểu vì sao chỉ nên sử dụng phần mềm khi được phép.</div>
+        <button class="btn btn-sm" onclick="markStepDone(this,'read1','Đã đọc khám phá Bài 6 (+5%)')">✓ Đã đọc khám phá (+5%)</button>
+      </div>
+      
+<div class="grid-3">
+  <div class="sgk-fig">
+    <div style="font-weight:800;color:#1e3a8a;margin-bottom:6px">Phần mềm miễn phí & Không miễn phí</div>
+    <p style="margin:0;font-size:14.5px">Phần mềm do cá nhân/tổ chức tạo ra để học tập, làm việc, giải trí. Ví dụ miễn phí: <b>Kiran's Typing Tutor</b>, <b>Scratch 3</b>, <b>Unikey</b>; không miễn phí: <b>PowerPoint</b>, <b>mtd-Lac Viet Dictionaries</b>.</p>
+    <div class="sgk-fig-caption">Hoạt động 1 & Hình 23 (SGK trang 27–28)</div>
+  </div>
+  <div class="sgk-fig">
+    <div style="font-weight:800;color:#b45309;margin-bottom:6px">Tình huống "Product Activation Failed"</div>
+    <p style="margin:0;font-size:14.5px">Khoa thấy phần mềm trình chiếu báo hết hạn bản quyền; Minh nhắc cách dùng không trả tiền nhưng An và Khoa chỉ ra rằng dùng trái phép vi phạm pháp luật và mất an toàn cho máy tính.</p>
+    <div class="sgk-fig-caption">Hoạt động 2 – Hội thoại An, Minh, Khoa (SGK trang 28)</div>
+  </div>
+  <div class="sgk-fig">
+    <div style="font-weight:800;color:#0f766e;margin-bottom:6px">Phần mềm có bản quyền</div>
+    <p style="margin:0;font-size:14.5px">Phần mềm đã được tác giả (cá nhân hoặc tổ chức) cho phép sử dụng. Kể cả phần mềm cho dùng miễn phí hợp pháp như <i>Kiran's Typing Tutor</i> cũng là phần mềm có bản quyền khi được tác giả cho phép.</p>
+    <div class="sgk-fig-caption">Kiến thức mới mục 2 (SGK trang 28–29)</div>
+  </div>
+</div>
+
+    </div>
+
+    <div class="card">
+      <h2>🧪 Thực hành tương tác có chấm điểm: Nhận biết bản quyền & Sử dụng phần mềm đúng quy định</h2>
+      <div class="guide-note">
+        <div class="guide-text"><b>Hướng dẫn thực hành:</b> Hoàn thành 2 nhiệm vụ thực hành tương tác dưới đây để tích luỹ 25% tiến độ thực hành của Chặng 1.</div>
+        <button class="btn btn-sm btn-teal" onclick="markStepDone(this,'read2','Đã đọc hướng dẫn thực hành (+5%)')">✓ Đã đọc hướng dẫn (+5%)</button>
+      </div>
+      
+<div class="lab-box">
+  <div style="font-weight:800;color:#1e3a8a;margin-bottom:8px">1️⃣ Nhiệm vụ 1 (+15%): Phân loại phần mềm miễn phí và không miễn phí</div>
+  <p style="margin:0 0 10px;font-size:14.5px">Em hãy chọn đúng nhóm quyền sử dụng cho từng phần mềm dưới đây (dựa theo Hình 23 & mục 1 SGK trang 27–28):</p>
+  <div class="grid-2">
+    <div style="background:#fff;padding:10px;border-radius:10px;border:1px solid #cbd5e1">
+      <b>a) Kiran's Typing Tutor</b> (luyện gõ bàn phím)<br>
+      <select id="b6-l1-a" style="margin-top:6px;width:100%">
+        <option value="">-- Chọn quyền sử dụng --</option>
+        <option value="free">Phần mềm miễn phí</option>
+        <option value="paid">Phần mềm không miễn phí</option>
+      </select>
+    </div>
+    <div style="background:#fff;padding:10px;border-radius:10px;border:1px solid #cbd5e1">
+      <b>b) PowerPoint</b> (tạo bài trình chiếu của Microsoft)<br>
+      <select id="b6-l1-b" style="margin-top:6px;width:100%">
+        <option value="">-- Chọn quyền sử dụng --</option>
+        <option value="free">Phần mềm miễn phí</option>
+        <option value="paid">Phần mềm không miễn phí</option>
+      </select>
+    </div>
+    <div style="background:#fff;padding:10px;border-radius:10px;border:1px solid #cbd5e1">
+      <b>c) Scratch 3</b> (lập trình trực quan cho thiếu nhi)<br>
+      <select id="b6-l1-c" style="margin-top:6px;width:100%">
+        <option value="">-- Chọn quyền sử dụng --</option>
+        <option value="free">Phần mềm miễn phí</option>
+        <option value="paid">Phần mềm không miễn phí</option>
+      </select>
+    </div>
+    <div style="background:#fff;padding:10px;border-radius:10px;border:1px solid #cbd5e1">
+      <b>d) mtd-Lac Viet Dictionaries</b> (từ điển trả phí 219.900 đ)<br>
+      <select id="b6-l1-d" style="margin-top:6px;width:100%">
+        <option value="">-- Chọn quyền sử dụng --</option>
+        <option value="free">Phần mềm miễn phí</option>
+        <option value="paid">Phần mềm không miễn phí</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn btn-sm btn-green" style="margin-top:10px" onclick="checkB6Lab1()">✅ Chấm điểm Nhiệm vụ 1</button>
+  <div id="b6-fb1" class="fb-box hidden"></div>
+</div>
+
+<div class="lab-box">
+  <div style="font-weight:800;color:#1e3a8a;margin-bottom:8px">2️⃣ Nhiệm vụ 2 (+10%): Chọn lí do nên sử dụng phần mềm có bản quyền</div>
+  <p style="margin:0 0 8px;font-size:14.5px">Hãy đánh dấu tích vào tất cả các lí do đúng (theo sơ đồ 4 lí do SGK trang 29):</p>
+  <label class="option" style="background:#fff"><input type="checkbox" id="b6-r1"> Giữ được an toàn thông tin trên máy tính, tránh nguy cơ nhiễm virus/mã độc.</label>
+  <label class="option" style="background:#fff"><input type="checkbox" id="b6-r2"> Tránh nguy cơ vi phạm pháp luật.</label>
+  <label class="option" style="background:#fff"><input type="checkbox" id="b6-r3"> Có thể được hỗ trợ từ nhà sản xuất khi phần mềm gặp sự cố hoặc trục trặc.</label>
+  <label class="option" style="background:#fff"><input type="checkbox" id="b6-r4"> Bảo vệ quyền lợi của người làm ra sản phẩm có ích cho xã hội.</label>
+  <label class="option" style="background:#fff"><input type="checkbox" id="b6-r5"> Giúp máy tính tự động tăng dung lượng ổ cứng lên gấp đôi.</label>
+  <button class="btn btn-sm btn-green" style="margin-top:8px" onclick="checkB6Lab2()">✅ Chấm điểm Nhiệm vụ 2</button>
+  <div id="b6-fb2" class="fb-box hidden"></div>
+</div>
+
+    </div>
+  </section>
+
+  <section id="stage-1" class="hidden">
+    <div class="card">
+      <h2>💡 Hộp kiến thức Ghi nhớ (SGK Tin học 4 – Trang 28–29)</h2>
+      <div class="guide-note">
+        <div class="guide-text"><b>Ghi nhớ trọng tâm:</b> Đọc kĩ nội dung cốt lõi của bài học và bấm xác nhận hoàn thành Ghi nhớ.</div>
+        <button class="btn btn-sm" onclick="handleMemoDone(this)">✓ Xác nhận đã đọc Ghi nhớ (+10%)</button>
+      </div>
+      
+<div class="memo-box">
+  <ul>
+    <li>📌 Có những phần mềm được <b>miễn phí</b> sử dụng, có những phần mềm <b>không miễn phí</b> sử dụng.</li>
+    <li>🔒 Phần mềm đã được tác giả cho phép sử dụng gọi là <b>phần mềm có bản quyền</b>. Em <b>chỉ được sử dụng phần mềm khi được phép</b>.</li>
+    <li>🛡️ Sử dụng phần mềm có bản quyền giúp <b>giữ an toàn thông tin</b>, <b>tránh vi phạm pháp luật</b>, <b>được hỗ trợ khi gặp sự cố</b> và <b>bảo vệ quyền lợi tác giả</b>.</li>
+  </ul>
+</div>
+
+      <h3>🛠️ Quy trình thực hành chuẩn</h3>
+      
+<div class="grid-2">
+  <div class="step-list">
+    <strong>Phân biệt quyền sử dụng phần mềm</strong>
+    <ol>
+      <li><b>Bước 1:</b> Tìm hiểu thông tin về tác giả và quyền sử dụng của phần mềm (miễn phí hay có tính phí).</li>
+      <li><b>Bước 2:</b> Kiểm tra xem phần mềm có nằm trong danh mục được gia đình, nhà trường hoặc tác giả cho phép sử dụng không.</li>
+      <li><b>Bước 3:</b> Không tự ý tải hoặc sử dụng phần mềm không rõ nguồn gốc, không được phép.</li>
+    </ol>
+  </div>
+  <div class="step-list">
+    <strong>Ứng xử đúng khi sử dụng phần mềm</strong>
+    <ol>
+      <li><b>Bước 1:</b> Chỉ cài đặt và sử dụng phần mềm có bản quyền / được phép.</li>
+      <li><b>Bước 2:</b> Khi thấy thông báo hết hạn bản quyền hoặc lỗi kích hoạt, trao đổi với người lớn / thầy cô.</li>
+      <li><b>Bước 3:</b> Nhắc nhở người thân, bạn bè tôn trọng bản quyền phần mềm và bảo vệ an toàn máy tính.</li>
+    </ol>
+  </div>
+</div>
+
+    </div>
+  </section>
+
+  <section id="stage-2" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <h2>⭐ Hoạt động Vận dụng – Trò chơi: Ngôi sao may mắn (25% tiến độ)</h2>
+        <div class="candy-bar">🍬 Số kẹo thưởng: <span id="candy-count">0</span> viên • Hoàn thành: <span id="star-done-count">0</span>/5 sao</div>
+      </div>
+      <p>Mỗi ngôi sao trả lời đúng giúp em nhận kẹo thưởng và cộng thêm <b>5% tiến độ tương tác</b> bài học!</p>
+      <div class="stars-grid">
+        <button class="star-btn" id="star-0" onclick="openStar(0)">⭐ Ngôi sao 1<br><small>(+3 kẹo • 5%)</small></button>
+        <button class="star-btn" id="star-1" onclick="openStar(1)">⭐ Ngôi sao 2<br><small>(+2 kẹo • 5%)</small></button>
+        <button class="star-btn" id="star-2" onclick="openStar(2)">⭐ Ngôi sao 3<br><small>(+5 kẹo • 5%)</small></button>
+        <button class="star-btn" id="star-3" onclick="openStar(3)">⭐ Ngôi sao 4<br><small>(+8 kẹo • 5%)</small></button>
+        <button class="star-btn" id="star-4" onclick="openStar(4)">⭐ Ngôi sao 5<br><small>(+10 kẹo • 5%)</small></button>
+      </div>
+      <div id="star-stage" class="card hidden" style="background:#fffbeb;border-color:#fde68a"></div>
+    </div>
+  </section>
+
+  <section id="stage-3" class="hidden">
+    <div class="card">
+      <h2>📝 Luyện tập & Đánh giá trắc nghiệm (30% tiến độ • 5.0 điểm)</h2>
+      <p style="margin-top:0;color:#475569">Ngân hàng gồm <b>40 câu hỏi</b> đầy đủ các mức độ (<i>Nhận biết, Thông hiểu, Vận dụng</i>) và 4 dạng bài (<i>Trắc nghiệm, Đúng/Sai, Nối cột, Điền từ</i>) bám sát Bài 6 SGK Tin học 4. Mỗi lượt làm bài hệ thống xuất ngẫu nhiên <b>10 câu</b>, chấm điểm chi tiết kèm <b>đáp án giảng giải</b>, cộng hợp với <b>điểm tương tác các chặng 1–3</b> để tính <b>Tổng điểm / 10</b> và gửi về Google Sheets của giáo viên.</p>
+      <div id="quiz-setup">
+        <button class="btn" id="btn-start-quiz" onclick="startQuiz()">🚀 Bắt đầu làm bài trắc nghiệm (10 câu ngẫu nhiên)</button>
+      </div>
+      <div id="quiz-work" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:#f8fafc;padding:12px 16px;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:12px">
+          <div class="timer" id="quiz-timer">⏱️ 08:00</div>
+          <div style="font-size:14px;color:#475569;font-weight:600">Cấu trúc đề: 4 Nhận biết • 3 Thông hiểu • 3 Vận dụng (10 câu)</div>
+        </div>
+        <div id="quiz-questions"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+          <button class="btn btn-green" id="btn-submit-quiz" onclick="submitQuiz()">✅ Nộp bài, Xem giảng giải & Gửi điểm tổng hợp</button>
+        </div>
+      </div>
+      <div id="quiz-result" class="hidden" style="margin-top:18px"></div>
+    </div>
+  </section>
+
+  <footer>
+    Học liệu điện tử tương tác Tin học 4 – Bài 6: Sử dụng phần mềm khi được phép • Ghi nhận % tương tác & điểm số về Google Sheets.
+  </footer>
+</div>
+
+<script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbzAKzG7QD3AaIkuzNXmIz_zCCdtE_V4dful3J_45I5v9Y0qPtDbVAoXKlqzeMwjEq5Drg/exec";
+const STAR_QUESTIONS = [{"q": "Câu 1: Phần mềm nào dưới đây là phần mềm miễn phí theo SGK trang 27–28?", "opts": ["Kiran's Typing Tutor", "PowerPoint", "mtd-Lac Viet Dictionaries"], "ans": 0, "candy": 3}, {"q": "Câu 2: Phần mềm nào dưới đây là phần mềm không miễn phí?", "opts": ["PowerPoint", "Scratch 3", "Unikey"], "ans": 0, "candy": 2}, {"q": "Câu 3: Phần mềm đã được tác giả cho phép sử dụng được gọi là gì?", "opts": ["Phần mềm có bản quyền", "Phần mềm không có hình dạng", "Phần mềm trò chơi"], "ans": 0, "candy": 5}, {"q": "Câu 4: Em chỉ được sử dụng phần mềm khi nào?", "opts": ["Khi được tác giả cho phép sử dụng", "Khi thích thì tự ý bẻ khoá dùng thử", "Khi thấy tên hay trên mạng"], "ans": 0, "candy": 8}, {"q": "Câu 5: Sử dụng phần mềm có bản quyền giúp ích gì cho máy tính của em?", "opts": ["Giữ an toàn thông tin và tránh nguy cơ bị nhiễm virus/mã độc", "Làm máy tính không cần dùng chuột nữa", "Tự động dịch mọi trang web"], "ans": 0, "candy": 10}];
+const BANK_40 = [{"type": "mcq", "level": "NB", "q": "Mỗi phần mềm là sản phẩm trí tuệ và là tài sản của ai?", "options": ["Cá nhân hoặc tổ chức là tác giả của phần mềm", "Cửa hàng bán thiết bị điện", "Tờ báo địa phương", "Nhà cung cấp điện"], "answer": 0, "explain": "Mỗi phần mềm là sản phẩm trí tuệ, tài sản của tác giả (cá nhân hoặc tổ chức)."}, {"type": "mcq", "level": "NB", "q": "Phần mềm đã được tác giả cho phép sử dụng được gọi là gì?", "options": ["Phần mềm có bản quyền", "Phần mềm hệ thống", "Phần mềm soạn thảo", "Phần mềm trò chơi"], "answer": 0, "explain": "Theo SGK trang 28, phần mềm đã được tác giả cho phép sử dụng gọi là phần mềm có bản quyền."}, {"type": "mcq", "level": "NB", "q": "Trong các phần mềm ở Hình 23 (SGK trang 27), phần mềm nào là phần mềm miễn phí?", "options": ["Kiran's Typing Tutor và Scratch 3", "PowerPoint và mtd-Lac Viet Dictionaries", "Tutor for Adobe Photoshop và Basic Math for Kids", "123 Numbers và mtd-Lac Viet Dictionaries"], "answer": 0, "explain": "Kiran's Typing Tutor và Scratch 3 được ghi rõ là Miễn phí trên trang 27."}, {"type": "mcq", "level": "NB", "q": "Phần mềm nào sau đây là phần mềm không miễn phí?", "options": ["PowerPoint", "Kiran's Typing Tutor", "Scratch 3", "Unikey"], "answer": 0, "explain": "PowerPoint là phần mềm không miễn phí (cần mua bản quyền sử dụng)."}, {"type": "mcq", "level": "NB", "q": "Quy tắc quan trọng nhất khi sử dụng phần mềm đối với học sinh là gì?", "options": ["Chỉ được sử dụng phần mềm khi được phép", "Tự ý cài bất kì phần mềm nào trên mạng", "Sử dụng phần mềm không rõ nguồn gốc", "Sao chép phần mềm có phí để dùng chùa"], "answer": 0, "explain": "Theo mục tiêu và nội dung Bài 6, em chỉ được sử dụng phần mềm khi được phép."}, {"type": "mcq", "level": "NB", "q": "Một trong những lí do nên sử dụng phần mềm có bản quyền là gì?", "options": ["Giữ được an toàn thông tin trên máy tính", "Làm màn hình lớn hơn", "Tự động tắt máy tính", "Không cần kết nối mạng khi tải phần mềm"], "answer": 0, "explain": "Dùng phần mềm có bản quyền giúp giữ an toàn thông tin trên máy tính."}, {"type": "mcq", "level": "NB", "q": "Khi phần mềm có bản quyền gặp sự cố hoặc trục trặc, người dùng có bản quyền có lợi thế gì?", "options": ["Có thể được hỗ trợ từ nhà sản xuất", "Bị khoá vĩnh viễn không mở được", "Phải tự sửa mã nguồn", "Không được hỏi ai"], "answer": 0, "explain": "Sử dụng phần mềm có bản quyền giúp có thể được hỗ trợ từ nhà sản xuất khi gặp sự cố."}, {"type": "mcq", "level": "NB", "q": "Sử dụng phần mềm có bản quyền giúp tránh được rủi ro pháp luật nào?", "options": ["Tránh nguy cơ vi phạm pháp luật", "Tránh bị mất điện", "Tránh bị ướt bàn phím", "Tránh bị rơi chuột"], "answer": 0, "explain": "Dùng trái phép phần mềm có bản quyền vi phạm pháp luật, nên dùng phần mềm có bản quyền giúp tránh rủi ro này."}, {"type": "mcq", "level": "NB", "q": "Sử dụng phần mềm có bản quyền góp phần bảo vệ điều gì?", "options": ["Bảo vệ quyền lợi của người làm ra sản phẩm có ích cho xã hội", "Bảo vệ bàn phím khỏi bụi", "Bảo vệ loa ngoài", "Bảo vệ dây cáp sạc"], "answer": 0, "explain": "Tôn trọng bản quyền giúp bảo vệ quyền lợi của tác giả làm ra phần mềm có ích."}, {"type": "mcq", "level": "NB", "q": "Trong Luyện tập 1 (SGK trang 29), các phần mềm Word, Unikey, Kiran's Typing Tutor, Kids Games Learning Science có phần mềm nào không miễn phí?", "options": ["Word", "Unikey", "Kiran's Typing Tutor", "Kids Games Learning Science"], "answer": 0, "explain": "Word là phần mềm không miễn phí, còn Unikey, Kiran's Typing Tutor và Kids Games Learning Science đều miễn phí."}, {"type": "mcq", "level": "NB", "q": "Ai là người có quyền cho phép hoặc không cho phép người khác sử dụng phần mềm?", "options": ["Tác giả của phần mềm", "Người qua đường", "Người dùng ngẫu nhiên", "Thợ sửa xe"], "answer": 0, "explain": "Tác giả có quyền cho phép hoặc không cho phép sử dụng phần mềm của mình."}, {"type": "tf", "level": "NB", "q": "Xác định Đúng hoặc Sai về phần mềm miễn phí, không miễn phí và bản quyền:", "items": [{"text": "a) Có phần mềm miễn phí và có phần mềm không miễn phí sử dụng.", "ans": true}, {"text": "b) Phần mềm miễn phí do tác giả cho phép dùng miễn phí cũng là phần mềm có bản quyền.", "ans": true}, {"text": "c) Em được tự ý sử dụng mọi phần mềm trên máy tính mà không cần được phép.", "ans": false}, {"text": "d) PowerPoint là phần mềm không miễn phí.", "ans": true}], "explain": "Ý a, b, d đúng. Ý c sai vì em chỉ được sử dụng phần mềm khi được phép."}, {"type": "match", "level": "NB", "q": "Nối phần mềm ở cột A với nhóm đặc điểm ở cột B:", "left": ["1. Kiran's Typing Tutor", "2. Scratch 3", "3. PowerPoint", "4. Phần mềm có bản quyền"], "right": ["a) Phần mềm luyện gõ phím miễn phí", "b) Phần mềm lập trình miễn phí", "c) Phần mềm trình chiếu không miễn phí", "d) Phần mềm được tác giả cho phép sử dụng"], "pairs": [0, 1, 2, 3], "explain": "Mỗi phần mềm có chức năng và quyền sử dụng đặc trưng theo SGK trang 27–29."}, {"type": "fill", "level": "NB", "q": "Điền từ thích hợp (tác giả, bản quyền, được phép, an toàn) vào chỗ trống:", "text": "Mỗi phần mềm là tài sản trí tuệ của {0}. Phần mềm đã được tác giả cho phép sử dụng gọi là phần mềm có {1}. Em chỉ được sử dụng phần mềm khi {2} và nên dùng phần mềm có bản quyền để giữ {3} thông tin.", "blanks": ["tác giả", "bản quyền", "được phép", "an toàn"], "wordBank": ["tác giả", "bản quyền", "được phép", "an toàn", "trò chơi"], "explain": "Nội dung tóm tắt kiến thức chính của Bài 6 SGK Tin học 4."}, {"type": "mcq", "level": "TH", "q": "Trong đoạn hội thoại trang 28, khi phần mềm trình chiếu của Khoa báo 'Product Activation Failed' và khó sử dụng, điều đó cho thấy gì?", "options": ["Phần mềm có bản quyền trên máy đang gặp vấn đề bản quyền/kích hoạt và cần được xử lí đúng quy định", "Phần mềm đã biến thành phần cứng", "Máy tính bị hỏng chuột", "Màn hình bị vỡ kính"], "answer": 0, "explain": "Thông báo kích hoạt bản quyền cho thấy phần mềm cần bản quyền hợp lệ để tiếp tục sử dụng bình thường."}, {"type": "mcq", "level": "TH", "q": "Vì sao bạn Khoa không chọn cách dùng phần mềm không trả tiền mà Minh nhắc tới?", "options": ["Vì dùng trái phép vừa vi phạm pháp luật, ảnh hưởng quyền lợi tác giả, vừa gây mất an toàn cho máy tính", "Vì máy tính không có bàn phím", "Vì Khoa không thích học Tin học", "Vì phần mềm không chạy được trên Windows"], "answer": 0, "explain": "Khoa nhận ra dùng trái phép vi phạm pháp luật, hại quyền lợi tác giả và gây mất an toàn cho máy tính."}, {"type": "mcq", "level": "TH", "q": "Phần mềm miễn phí khác phần mềm không miễn phí ở điểm nào cơ bản nhất?", "options": ["Phần mềm miễn phí được phép sử dụng không mất tiền, còn phần mềm không miễn phí phải trả phí theo quy định", "Phần mềm miễn phí không thể chạy trên máy tính", "Phần mềm không miễn phí không có tác giả", "Hai loại này giống hệt nhau về mức phí"], "answer": 0, "explain": "Sự khác nhau cơ bản là quyền sử dụng có thu phí hay miễn phí theo quy định của tác giả/nhà cung cấp."}, {"type": "mcq", "level": "TH", "q": "Tại sao khi tìm phần mềm trên mạng, học sinh không nên tải các bản cài đặt trôi nổi, bẻ khoá không rõ nguồn gốc?", "options": ["Vì dễ chứa virus, phần mềm độc hại gây mất an toàn thông tin và vi phạm bản quyền", "Vì tải nhanh hơn bình thường", "Vì luôn miễn phí trọn đời", "Vì tự động làm sạch máy tính"], "answer": 0, "explain": "Nguồn không rõ ràng tiềm ẩn virus, mã độc đánh cắp thông tin và vi phạm bản quyền."}, {"type": "mcq", "level": "TH", "q": "Khi tác giả cho phép sử dụng một phần mềm miễn phí cho mục đích học tập, vì sao phần mềm đó vẫn có bản quyền?", "options": ["Vì bản quyền là quyền của tác giả cho phép hoặc không cho phép sử dụng, không phụ thuộc vào việc thu tiền hay miễn phí", "Vì mọi phần mềm đều do nhà trường tự viết", "Vì phần mềm miễn phí không cần tác giả", "Vì chỉ có phần mềm đắt tiền mới có bản quyền"], "answer": 0, "explain": "SGK trang 29 nêu rõ Kiran's Typing Tutor có bản quyền vì tác giả cho phép sử dụng miễn phí."}, {"type": "mcq", "level": "TH", "q": "Dùng phần mềm có bản quyền tránh được những rủi ro nào dưới đây?", "options": ["Máy tính bị nhiễm virus, bị đánh cắp thông tin và vi phạm pháp luật", "Bị mất điện đột ngột", "Bị đổ nước vào bàn phím", "Bị rơi chuột xuống đất"], "answer": 0, "explain": "Dùng phần mềm bản quyền giúp tránh nhiễm virus/đánh cắp thông tin và tránh vi phạm pháp luật."}, {"type": "mcq", "level": "TH", "q": "Một bạn học sinh nói: 'Phần mềm miễn phí thì không cần tôn trọng tác giả'. Nhận xét của em về ý kiến này là gì?", "options": ["Sai, vì phần mềm miễn phí vẫn là sản phẩm trí tuệ của tác giả và cho dùng là do tác giả cho phép", "Đúng, vì miễn phí nghĩa là không có tác giả", "Đúng, vì ai cũng có quyền sửa đổi tuỳ ý", "Đúng, vì miễn phí không thuộc phạm vi môn Tin học"], "answer": 0, "explain": "Phần mềm miễn phí vẫn có tác giả và có điều khoản cho phép sử dụng của tác giả."}, {"type": "mcq", "level": "TH", "q": "Trong các lợi ích của phần mềm có bản quyền, lợi ích nào liên quan trực tiếp đến việc sửa lỗi hoặc nâng cấp khi gặp trục trặc?", "options": ["Có thể được hỗ trợ từ nhà sản xuất khi phần mềm gặp sự cố", "Tự động làm sạch bụi trên màn hình", "Tự động gõ văn bản hộ", "Tự động in tài liệu"], "answer": 0, "explain": "Nhà sản xuất hỗ trợ người dùng hợp pháp khi phần mềm gặp sự cố hoặc trục trặc."}, {"type": "mcq", "level": "TH", "q": "Vì sao việc sử dụng phần mềm có bản quyền giúp bảo vệ quyền lợi của người làm ra sản phẩm có ích cho xã hội?", "options": ["Vì ghi nhận công sức sáng tạo và giúp tác giả có nguồn lực tiếp tục tạo sản phẩm hữu ích", "Vì làm giảm số lượng phần mềm", "Vì khiến người khác không dùng được máy tính", "Vì làm máy tính chạy chậm lại"], "answer": 0, "explain": "Tôn trọng bản quyền bảo vệ công sức và quyền lợi hợp pháp của người tạo ra phần mềm."}, {"type": "mcq", "level": "TH", "q": "Trong các ý sau (A. Được hỗ trợ nếu phần mềm bị trục trặc; B. Bảo vệ người sản xuất phần mềm; C. Giữ an toàn thông tin trong máy tính; D. Được xem nhiều đoạn video quảng cáo), ý nào KHÔNG phải lí do nên dùng phần mềm có bản quyền?", "options": ["D. Được xem nhiều đoạn video quảng cáo", "A. Được hỗ trợ nếu phần mềm bị trục trặc", "B. Bảo vệ người sản xuất phần mềm", "C. Giữ an toàn thông tin trong máy tính"], "answer": 0, "explain": "Xem nhiều video quảng cáo không phải lí do nên sử dụng phần mềm có bản quyền."}, {"type": "tf", "level": "TH", "q": "Xác định Đúng hoặc Sai về việc sử dụng phần mềm đúng bản quyền:", "items": [{"text": "a) Sử dụng phần mềm trái phép có thể gây mất an toàn cho máy tính.", "ans": true}, {"text": "b) Dùng phần mềm có bản quyền giúp tránh nguy cơ vi phạm pháp luật.", "ans": true}, {"text": "c) Phần mềm không miễn phí luôn có thể dùng mãi mãi mà không cần bản quyền.", "ans": false}, {"text": "d) Tác giả có quyền cho phép hoặc không cho phép người khác sử dụng phần mềm.", "ans": true}], "explain": "Ý a, b, d đúng. Ý c sai vì phần mềm không miễn phí cần có bản quyền/quyền sử dụng hợp pháp."}, {"type": "match", "level": "TH", "q": "Ghép hành động/tình huống (cột A) với nhận xét phù hợp (cột B):", "left": ["1. Dùng phần mềm bản quyền hợp pháp", "2. Dùng phần mềm trái phép không trả phí", "3. Phần mềm báo lỗi/hết bản quyền", "4. Phần mềm miễn phí từ tác giả"], "right": ["a) Đúng quy định, an toàn và tôn trọng tác giả", "b) Vi phạm pháp luật và tiềm ẩn mất an toàn máy tính", "c) Cần trao đổi người lớn/thầy cô để xử lí đúng cách", "d) Có bản quyền vì được tác giả cho phép dùng miễn phí"], "pairs": [0, 1, 2, 3], "explain": "Mỗi tình huống gắn với quy tắc ứng xử và hiểu biết bản quyền trong Bài 6."}, {"type": "fill", "level": "TH", "q": "Điền từ thích hợp (pháp luật, an toàn, hỗ trợ, quyền lợi) vào chỗ trống:", "text": "Dùng phần mềm có bản quyền giúp tránh nguy cơ vi phạm {0}, giữ {1} thông tin trên máy tính, có thể được {2} khi gặp sự cố và bảo vệ {3} của người làm ra sản phẩm.", "blanks": ["pháp luật", "an toàn", "hỗ trợ", "quyền lợi"], "wordBank": ["pháp luật", "an toàn", "hỗ trợ", "quyền lợi", "đồ chơi"], "explain": "Bốn lí do cốt lõi nên sử dụng phần mềm có bản quyền theo sơ đồ SGK trang 29."}, {"type": "mcq", "level": "VD", "q": "Nếu biết anh Bình đang sử dụng một phần mềm không có bản quyền trên máy tính, em nên nói gì cho phù hợp?", "options": ["Giải thích nhẹ nhàng rằng dùng phần mềm không bản quyền có thể vi phạm pháp luật, hại quyền lợi tác giả và dễ nhiễm virus, nên dùng phần mềm được phép", "Khen anh làm rất đúng và rủ bạn bè cùng làm theo", "Tự ý xoá toàn bộ dữ liệu của anh Bình", "Không quan tâm dù thấy máy anh có nguy cơ nhiễm virus"], "answer": 0, "explain": "Trao đổi lịch sự, giải thích rõ tác hại về pháp luật, bản quyền và an toàn máy tính là cách ứng xử văn minh, đúng bài học."}, {"type": "mcq", "level": "VD", "q": "Khi cần cài một phần mềm học tập mới lên máy tính gia đình, em nên làm gì đầu tiên?", "options": ["Hỏi ý kiến bố mẹ/người lớn và chọn phần mềm có bản quyền, nguồn rõ ràng", "Tự bấm vào mọi liên kết tải phần mềm miễn phí không rõ nguồn gốc trên mạng", "Tắt phần mềm bảo vệ máy tính trước khi tải", "Cài bừa nhiều phần mềm lạ cùng lúc"], "answer": 0, "explain": "Hỏi người lớn và chọn nguồn hợp pháp, có bản quyền giúp đảm bảo được phép sử dụng và an toàn cho máy tính."}, {"type": "mcq", "level": "VD", "q": "Trên máy tính phòng tin học có cài sẵn phần mềm luyện gõ phím Kiran's Typing Tutor và trình chiếu PowerPoint do nhà trường trang bị. Em nên sử dụng thế nào?", "options": ["Sử dụng đúng mục đích học tập theo hướng dẫn của thầy cô và giữ gìn máy tính cẩn thận", "Tự ý sao chép phần mềm mang về cài trái phép cho nhiều máy khác", "Tự ý xoá các thư mục phần mềm trên máy", "Cài thêm trò chơi không được phép"], "answer": 0, "explain": "Sử dụng đúng mục đích học tập, đúng quy định và tôn trọng bản quyền là cách làm đúng của học sinh."}, {"type": "mcq", "level": "VD", "q": "Bạn Minh thấy một trang web quảng cáo 'Tải phần mềm trả phí miễn phí 100% không cần bản quyền'. Theo em, Minh nên làm gì?", "options": ["Không tải từ trang không rõ nguồn gốc và báo cho bố mẹ hoặc thầy cô biết", "Nhập thông tin cá nhân rồi tải ngay", "Cài đặt xong rồi gửi cho cả lớp dùng chung", "Tin ngay mà không kiểm tra"], "answer": 0, "explain": "Trang tải phần mềm trái phép rất dễ chứa mã độc lừa đảo và vi phạm bản quyền."}, {"type": "mcq", "level": "VD", "q": "Khi làm bài thuyết trình cho lớp, em dùng phần mềm được phép sử dụng và ghi rõ nguồn tư liệu/hình ảnh. Việc làm đó thể hiện điều gì?", "options": ["Ý thức tôn trọng bản quyền và văn hoá sử dụng công nghệ số đúng đắn", "Làm mất thời gian không cần thiết", "Làm giảm chất lượng bài thuyết trình", "Vi phạm quy định của lớp"], "answer": 0, "explain": "Sử dụng phần mềm được phép và tôn trọng nguồn/bản quyền thể hiện văn hoá tốt trong môi trường số."}, {"type": "mcq", "level": "VD", "q": "Em muốn tìm một phần mềm vẽ đơn giản để tập vẽ trên máy tính. Dựa vào kiến thức Bài 6, em cần chú ý điều gì?", "options": ["Chọn phần mềm được phép sử dụng (miễn phí hợp pháp hoặc có bản quyền) và nhờ người lớn hỗ trợ cài đặt nếu cần", "Chỉ quan tâm đến biểu tượng đẹp mà không cần biết có bản quyền hay không", "Tự ý dùng phần mềm bẻ khoá", "Cài phần mềm lạ không hỏi ai"], "answer": 0, "explain": "Cần chú ý tính hợp pháp/được phép sử dụng và an toàn khi lựa chọn phần mềm."}, {"type": "mcq", "level": "VD", "q": "Một máy tính sau khi tải phần mềm không rõ nguồn gốc bỗng chạy chậm và hiện nhiều thông báo lạ. Nguyên nhân có thể là gì?", "options": ["Phần mềm không rõ nguồn gốc/không an toàn có thể làm máy nhiễm virus hoặc phát sinh lỗi", "Do máy tính được cập nhật phông chữ", "Do bàn phím có nhiều phím số", "Do đèn báo nguồn sáng"], "answer": 0, "explain": "Sử dụng phần mềm không an toàn, không bản quyền dễ làm máy tính nhiễm virus và gặp trục trặc."}, {"type": "mcq", "level": "VD", "q": "Khi giới thiệu cho bạn bè một phần mềm học tập bổ ích mà tác giả cho phép dùng miễn phí, em nên nêu những thông tin gì?", "options": ["Tên phần mềm, công dụng học tập và lưu ý đây là phần mềm miễn phí có bản quyền được tác giả cho phép", "Chỉ nói tên phần mềm mà không nói công dụng", "Khuyên bạn tìm bản lậu trên mạng", "Giấu tên tác giả"], "answer": 0, "explain": "Nêu rõ tên, công dụng và tính hợp pháp giúp bạn bè sử dụng phần mềm đúng cách và an toàn."}, {"type": "mcq", "level": "VD", "q": "Nếu phần mềm luyện gõ phím trên máy tính ở nhà bỗng gặp trục trặc không mở được, em nên làm gì?", "options": ["Báo cho bố mẹ hoặc thầy cô để kiểm tra và liên hệ hỗ trợ đúng cách", "Đập nhẹ vào thân máy cho phần mềm tự chạy", "Xoá bừa các tệp hệ thống", "Tự ý cài phần mềm lạ không rõ nguồn"], "answer": 0, "explain": "Báo người lớn/thầy cô để xử lí đúng cách, tránh làm hỏng thêm phần mềm hoặc dữ liệu."}, {"type": "tf", "level": "VD", "q": "Đánh giá Đúng hoặc Sai trong các tình huống thực tế ở Bài 6:", "items": [{"text": "a) Khi thấy bạn dùng phần mềm không có bản quyền, em có thể giải thích để bạn hiểu tác hại và chọn cách làm đúng.", "ans": true}, {"text": "b) Mọi phần mềm miễn phí hợp pháp đều không có tác giả.", "ans": false}, {"text": "c) Dùng phần mềm có bản quyền giúp được hỗ trợ khi gặp sự cố và bảo vệ quyền lợi tác giả.", "ans": true}, {"text": "d) Học sinh chỉ nên sử dụng phần mềm khi được phép.", "ans": true}], "explain": "Ý a, c, d đúng. Ý b sai vì phần mềm miễn phí hợp pháp vẫn do tác giả tạo ra và cho phép sử dụng."}, {"type": "match", "level": "VD", "q": "Nối tình huống thực tế (cột A) với cách xử lí hợp lí (cột B):", "left": ["1. Phần mềm báo lỗi bản quyền", "2. Thấy link tải phần mềm lạ", "3. Muốn cài phần mềm mới ở nhà", "4. Bạn định dùng phần mềm trái phép"], "right": ["a) Báo người lớn/thầy cô để kiểm tra đúng quy định", "b) Không tải tùy tiện để tránh virus và rủi ro", "c) Hỏi bố mẹ và chọn phần mềm có bản quyền/được phép", "d) Giải thích về bản quyền, pháp luật và an toàn máy tính"], "pairs": [0, 1, 2, 3], "explain": "Mỗi tình huống thực tế cần cách xử lí an toàn, tôn trọng bản quyền và đúng quy định."}, {"type": "fill", "level": "VD", "q": "Điền từ thích hợp (được phép, bản quyền, virus, hỗ trợ) vào chỗ trống:", "text": "Khi sử dụng phần mềm trên máy tính, em chỉ dùng phần mềm {0}. Phần mềm có {1} giúp tránh nguy cơ nhiễm {2} và có thể được {3} khi gặp sự cố.", "blanks": ["được phép", "bản quyền", "virus", "hỗ trợ"], "wordBank": ["được phép", "bản quyền", "virus", "hỗ trợ", "màu sắc"], "explain": "Vận dụng kiến thức về quyền sử dụng phần mềm và lợi ích của phần mềm có bản quyền."}, {"type": "fill", "level": "VD", "q": "Điền từ thích hợp (tác giả, pháp luật, miễn phí, không miễn phí) vào chỗ trống:", "text": "Có phần mềm {0} và phần mềm {1}. Dù miễn phí hay tính phí, phần mềm đều là sản phẩm của {2} và dùng trái phép có thể vi phạm {3}.", "blanks": ["miễn phí", "không miễn phí", "tác giả", "pháp luật"], "wordBank": ["miễn phí", "không miễn phí", "tác giả", "pháp luật", "thư mục"], "explain": "Tổng hợp kiến thức phân biệt phần mềm miễn phí/không miễn phí và tôn trọng bản quyền, pháp luật."}];
+
+const progressState = {
+  read1: false,
+  read2: false,
+  lab1: 0,
+  lab2: 0,
+  memo: false,
+  stars: [false,false,false,false,false],
+  quizDone: false,
+  quizRatio: 0
+};
+
+function updateDashboard(){
+  const readPct = (progressState.read1 ? 5 : 0) + (progressState.read2 ? 5 : 0);
+  const lab1Pct = Math.round(progressState.lab1 * 15);
+  const lab2Pct = Math.round(progressState.lab2 * 10);
+  const memoPct = progressState.memo ? 10 : 0;
+  const starCnt = progressState.stars.filter(Boolean).length;
+  const starPct = starCnt * 5;
+  const quizPct = progressState.quizDone ? 30 : 0;
+
+  const totalPct = Math.min(100, readPct + lab1Pct + lab2Pct + memoPct + starPct + quizPct);
+  const interRaw70 = readPct + lab1Pct + lab2Pct + memoPct + starPct;
+  const interScore5 = Number(((interRaw70 / 70) * 5).toFixed(2));
+  const quizScore5 = Number((progressState.quizRatio * 5).toFixed(2));
+  const totalScore10 = Number((interScore5 + quizScore5).toFixed(2));
+
+  document.getElementById('ui-pct').textContent = `Tiến độ bài học: ${totalPct}%`;
+  document.getElementById('ui-inter-score').textContent = `Điểm tương tác: ${interScore5.toFixed(1)} / 5.0`;
+  document.getElementById('ui-quiz-score').textContent = `Điểm trắc nghiệm: ${quizScore5.toFixed(1)} / 5.0`;
+  document.getElementById('ui-total-score').textContent = `🏆 Tổng điểm: ${totalScore10.toFixed(1)} / 10`;
+  document.getElementById('ui-progress-fill').style.width = totalPct + '%';
+
+  const setChk = (id, done, text) => {
+    const el = document.getElementById(id);
+    el.textContent = (done ? '✅ ' : '⬜ ') + text;
+    el.classList.toggle('done-item', done);
+  };
+  setChk('chk-read', readPct===10, `Đọc & Khám phá (${readPct}/10%)`);
+  setChk('chk-lab1', lab1Pct===15, `Thực hành nhiệm vụ 1 (${lab1Pct}/15%)`);
+  setChk('chk-lab2', lab2Pct===10, `Thực hành nhiệm vụ 2 (${lab2Pct}/10%)`);
+  setChk('chk-memo', memoPct===10, `Xác nhận Ghi nhớ (${memoPct}/10%)`);
+  setChk('chk-stars', starCnt===5, `Ngôi sao may mắn: ${starCnt}/5 (${starPct}/25%)`);
+  setChk('chk-quiz', progressState.quizDone, `Nộp bài trắc nghiệm 10 câu (${quizPct}/30%)`);
+
+  return {totalPct, interScore5, quizScore5, totalScore10};
+}
+
+function switchTab(idx){
+  for(let i=0;i<4;i++){
+    document.getElementById('stage-'+i).classList.toggle('hidden', i!==idx);
+    document.getElementById('tab-'+i).classList.toggle('active', i===idx);
+  }
+}
+
+function markStepDone(btn, key, doneLabel){
+  progressState[key] = true;
+  updateDashboard();
+  if(btn) btn.textContent = '✅ ' + doneLabel;
+}
+
+function handleMemoDone(btn){
+  progressState.memo = true;
+  updateDashboard();
+  if(btn) btn.textContent = '✅ Đã xác nhận Ghi nhớ (+10%)';
+}
+
+
+function checkB6Lab1(){
+  const a = document.getElementById('b6-l1-a').value;
+  const b = document.getElementById('b6-l1-b').value;
+  const c = document.getElementById('b6-l1-c').value;
+  const d = document.getElementById('b6-l1-d').value;
+  let ok = 0;
+  if(a==='free') ok++;
+  if(b==='paid') ok++;
+  if(c==='free') ok++;
+  if(d==='paid') ok++;
+  const ratio = ok/4;
+  if(ratio > progressState.lab1) progressState.lab1 = ratio;
+  updateDashboard();
+  const fb = document.getElementById('b6-fb1');
+  fb.classList.remove('hidden');
+  fb.style.background = ok===4 ? '#f0fdf4' : '#fffbeb';
+  fb.innerHTML = ok===4
+    ? "🎉 Chính xác 4/4! Kiran's Typing Tutor & Scratch 3 là miễn phí; PowerPoint & mtd-Lac Viet Dictionaries là không miễn phí (+15% tiến độ)."
+    : `🔎 Em phân loại đúng ${ok}/4 phần mềm (+${Math.round(ratio*15)}%/15% tiến độ). Gợi ý: Kiran's Typing Tutor & Scratch 3 là miễn phí; PowerPoint & mtd-Lac Viet Dictionaries không miễn phí.`;
+}
+
+function checkB6Lab2(){
+  const r1 = document.getElementById('b6-r1').checked;
+  const r2 = document.getElementById('b6-r2').checked;
+  const r3 = document.getElementById('b6-r3').checked;
+  const r4 = document.getElementById('b6-r4').checked;
+  const r5 = document.getElementById('b6-r5').checked;
+  let score = 0;
+  if(r1) score++; else score--;
+  if(r2) score++; else score--;
+  if(r3) score++; else score--;
+  if(r4) score++; else score--;
+  if(!r5) score++; else score--;
+  const ratio = Math.max(0, score) / 5;
+  if(ratio > progressState.lab2) progressState.lab2 = ratio;
+  updateDashboard();
+  const fb = document.getElementById('b6-fb2');
+  fb.classList.remove('hidden');
+  fb.style.background = ratio===1 ? '#f0fdf4' : '#fffbeb';
+  fb.innerHTML = ratio===1
+    ? '🎉 Tuyệt vời! Em chọn đúng cả 4 lí do dùng phần mềm có bản quyền và loại bỏ ý sai (+10% tiến độ).'
+    : `🔎 Em đạt ${Math.round(ratio*100)}% ở Nhiệm vụ 2 (+${Math.round(ratio*10)}%/10% tiến độ). Bốn lí do đúng gồm: an toàn thông tin, tránh vi phạm pháp luật, được hỗ trợ khi gặp sự cố, bảo vệ quyền lợi tác giả.`;
+}
+
+
+let totalCandies = 0;
+function openStar(idx){
+  const item = STAR_QUESTIONS[idx];
+  const st = document.getElementById('star-stage');
+  st.classList.remove('hidden');
+  st.innerHTML = `
+    <h3 style="margin-top:0;color:#b45309">⭐ ${esc(item.q)}</h3>
+    <div>
+      ${item.opts.map((o,i)=>`
+        <label class="option" style="background:#fff">
+          <input type="radio" name="star-radio" value="${i}"> ${'ABC'[i]}. ${esc(o)}
+        </label>
+      `).join('')}
+    </div>
+    <button class="btn btn-amber" style="margin-top:10px" onclick="checkStar(${idx})">🎁 Kiểm tra nhận kẹo & +5% tiến độ</button>
+    <div id="star-feedback" style="margin-top:10px;font-weight:700"></div>
+  `;
+}
+
+function checkStar(idx){
+  const sel = document.querySelector('input[name="star-radio"]:checked');
+  const fb = document.getElementById('star-feedback');
+  if(!sel){
+    fb.innerHTML = '<span style="color:#d97706">⚠️ Em hãy chọn một đáp án trước nhé!</span>';
+    return;
+  }
+  const item = STAR_QUESTIONS[idx];
+  if(Number(sel.value) === item.ans){
+    if(!progressState.stars[idx]){
+      progressState.stars[idx] = true;
+      totalCandies += item.candy;
+      document.getElementById('candy-count').textContent = totalCandies;
+      document.getElementById('star-done-count').textContent = progressState.stars.filter(Boolean).length;
+      document.getElementById('star-'+idx).classList.add('done');
+      updateDashboard();
+    }
+    fb.innerHTML = `<span style="color:#15803d">🎉 Chính xác! Em nhận được ${item.candy} viên kẹo và +5% tiến độ tương tác!</span>`;
+  } else {
+    fb.innerHTML = `<span style="color:#dc2626">❌ Chưa đúng rồi, em thử chọn lại đáp án khác nhé!</span>`;
+  }
+}
+
+const shuffle = arr => {
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+};
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LEVEL_LABEL = {NB:'Nhận biết',TH:'Thông hiểu',VD:'Vận dụng'};
+const LEVEL_CLASS = {NB:'b-nb',TH:'b-th',VD:'b-vd'};
+const TYPE_LABEL  = {mcq:'Trắc nghiệm',tf:'Đúng / Sai',match:'Nối cột',fill:'Điền từ'};
+
+let chosenQuiz = [], quizRemain = 480, quizTimer = null, quizSubmitted = false;
+
+function startQuiz(){
+  const name = document.getElementById('stu-name').value.trim();
+  const cls  = document.getElementById('stu-class').value.trim();
+  if(!name || !cls){
+    alert('Em vui lòng nhập đầy đủ Họ và tên và Lớp ở phía trên trước khi làm bài trắc nghiệm nhé!');
+    document.getElementById('stu-name').focus();
+    return;
+  }
+
+  const picked = [
+    ...shuffle(BANK_40.filter(q=>q.level==='NB')).slice(0,4),
+    ...shuffle(BANK_40.filter(q=>q.level==='TH')).slice(0,3),
+    ...shuffle(BANK_40.filter(q=>q.level==='VD')).slice(0,3)
+  ];
+
+  chosenQuiz = shuffle(picked).map(q=>{
+    if(q.type==='mcq'){
+      const ops = shuffle(q.options.map((t,i)=>({t,correct:i===q.answer})));
+      return {...q,ops};
+    }
+    if(q.type==='match'){
+      const rightShuffled = shuffle(q.right.map((t,idx)=>({t,origIdx:idx})));
+      return {...q,rightShuffled};
+    }
+    if(q.type==='fill'){
+      return {...q,wordBankShuffled:shuffle(q.wordBank)};
+    }
+    return {...q};
+  });
+
+  quizSubmitted = false;
+  quizRemain = 480;
+  document.getElementById('stu-name').disabled = true;
+  document.getElementById('stu-class').disabled = true;
+  document.getElementById('btn-start-quiz').disabled = true;
+  document.getElementById('quiz-work').classList.remove('hidden');
+  document.getElementById('quiz-result').classList.add('hidden');
+
+  const qWrap = document.getElementById('quiz-questions');
+  qWrap.innerHTML = '';
+
+  chosenQuiz.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-'+i;
+
+    const head = `<div><b>Câu ${i+1}. ${esc(q.q)}</b> <span class="badge ${LEVEL_CLASS[q.level]}">${LEVEL_LABEL[q.level]}</span> <span class="badge b-type">${TYPE_LABEL[q.type]}</span></div>`;
+    let body = '';
+
+    if(q.type==='mcq'){
+      body = q.ops.map((o,j)=>`
+        <label class="option" id="qopt-${i}-${j}">
+          <input type="radio" name="qq${i}" value="${j}"> ${'ABCD'[j]}. ${esc(o.t)}
+        </label>
+      `).join('');
+    } else if(q.type==='tf'){
+      body = q.items.map((it,j)=>`
+        <div class="tf-row" id="qtf-${i}-${j}">
+          <span>${esc(it.text)}</span>
+          <span class="tf-choices">
+            <label><input type="radio" name="qq${i}_${j}" value="true"> Đúng</label>
+            <label><input type="radio" name="qq${i}_${j}" value="false"> Sai</label>
+          </span>
+        </div>
+      `).join('');
+    } else if(q.type==='match'){
+      const optsHtml = '<option value="">-- Chọn ý nối --</option>' + q.rightShuffled.map(r=>`<option value="${r.origIdx}">${esc(r.t)}</option>`).join('');
+      body = q.left.map((lText,j)=>`
+        <div class="match-row" id="qmatch-${i}-${j}">
+          <div><b>${esc(lText)}</b></div>
+          <div><select id="qsel-${i}-${j}">${optsHtml}</select></div>
+        </div>
+      `).join('');
+    } else if(q.type==='fill'){
+      const optsHtml = '<option value="">-- Chọn từ --</option>' + q.wordBankShuffled.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
+      let txt = esc(q.text);
+      q.blanks.forEach((_,bIdx)=>{
+        txt = txt.replace('{' + bIdx + '}', `<select id="qfill-${i}-${bIdx}">${optsHtml}</select>`);
+      });
+      body = `<div class="word-bank">💡 <b>Từ gợi ý:</b> ${q.wordBankShuffled.map(w=>esc(w)).join(' &nbsp;•&nbsp; ')}</div><div class="fill-box">${txt}</div>`;
+    }
+
+    card.innerHTML = head + body + `<div class="explain-box hidden" id="qexp-${i}"></div>`;
+    qWrap.appendChild(card);
+  });
+
+  clearInterval(quizTimer);
+  quizTimer = setInterval(()=>{
+    quizRemain--;
+    const mm = String(Math.floor(quizRemain/60)).padStart(2,'0');
+    const ss = String(quizRemain%60).padStart(2,'0');
+    document.getElementById('quiz-timer').textContent = `⏱️ ${mm}:${ss}`;
+    if(quizRemain <= 0) submitQuiz();
+  },1000);
+}
+
+async function submitQuiz(){
+  if(quizSubmitted) return;
+  quizSubmitted = true;
+  clearInterval(quizTimer);
+  document.getElementById('btn-submit-quiz').disabled = true;
+  document.querySelectorAll('#quiz-questions input, #quiz-questions select').forEach(el=>el.disabled=true);
+
+  const totalQ = chosenQuiz.length;
+  let totalRaw = 0;
+  let fullRight = 0;
+  let reviewHtml = '<hr style="border:0;border-top:1px solid #cbd5e1;margin:16px 0"><h3>📋 Bảng tổng hợp đáp án & Giảng giải chi tiết</h3>';
+
+  chosenQuiz.forEach((q,i)=>{
+    let ratio = 0;
+    let userAns = '';
+    let rightAns = '';
+
+    if(q.type==='mcq'){
+      const sel = document.querySelector(`input[name="qq${i}"]:checked`);
+      const cIdx = sel ? Number(sel.value) : -1;
+      const rIdx = q.ops.findIndex(o=>o.correct);
+      ratio = (cIdx === rIdx) ? 1 : 0;
+
+      const rLab = document.getElementById(`qopt-${i}-${rIdx}`);
+      if(rLab) rLab.classList.add('opt-correct');
+      if(ratio===0 && cIdx!==-1){
+        const wLab = document.getElementById(`qopt-${i}-${cIdx}`);
+        if(wLab) wLab.classList.add('opt-wrong');
+      }
+      rightAns = `${'ABCD'[rIdx]}. ${esc(q.ops[rIdx].t)}`;
+      userAns  = cIdx===-1 ? '<i>Chưa chọn</i>' : `${'ABCD'[cIdx]}. ${esc(q.ops[cIdx].t)}`;
+    } else if(q.type==='tf'){
+      let sub = 0, uArr = [], rArr = [];
+      q.items.forEach((it,j)=>{
+        const sel = document.querySelector(`input[name="qq${i}_${j}"]:checked`);
+        const val = sel ? sel.value : null;
+        const row = document.getElementById(`qtf-${i}-${j}`);
+        if(val === String(it.ans)){
+          sub++; row.classList.add('opt-correct');
+        } else {
+          row.classList.add('opt-wrong');
+        }
+        const tag = it.text.slice(0,2);
+        uArr.push(`${tag} ${val===null?'(trống)':(val==='true'?'Đúng':'Sai')}`);
+        rArr.push(`${tag} <b>${it.ans?'Đúng':'Sai'}</b>`);
+      });
+      ratio = sub / q.items.length;
+      userAns = uArr.join('; ');
+      rightAns = rArr.join('; ');
+    } else if(q.type==='match'){
+      let sub = 0, uArr = [], rArr = [];
+      q.left.forEach((lTxt,j)=>{
+        const sel = document.getElementById(`qsel-${i}-${j}`);
+        const val = sel.value;
+        const row = document.getElementById(`qmatch-${i}-${j}`);
+        if(val === String(q.pairs[j])){
+          sub++; row.classList.add('opt-correct');
+        } else {
+          row.classList.add('opt-wrong');
+        }
+        const chosenTxt = val==='' ? '(trống)' : q.right[Number(val)];
+        uArr.push(`${esc(lTxt)} → ${esc(chosenTxt)}`);
+        rArr.push(`${esc(lTxt)} → <b>${esc(q.right[q.pairs[j]])}</b>`);
+      });
+      ratio = sub / q.left.length;
+      userAns = uArr.join(' | ');
+      rightAns = rArr.join(' | ');
+    } else if(q.type==='fill'){
+      let sub = 0, uArr = [], rArr = [];
+      q.blanks.forEach((wAns,bIdx)=>{
+        const sel = document.getElementById(`qfill-${i}-${bIdx}`);
+        const val = sel.value;
+        if(val === wAns){
+          sub++; sel.style.background='#dcfce7'; sel.style.borderColor='#16a34a';
+        } else {
+          sel.style.background='#fee2e2'; sel.style.borderColor='#dc2626';
+        }
+        uArr.push(`(${bIdx+1}) ${val===''?'trống':esc(val)}`);
+        rArr.push(`(${bIdx+1}) <b>${esc(wAns)}</b>`);
+      });
+      ratio = sub / q.blanks.length;
+      userAns = uArr.join(', ');
+      rightAns = rArr.join(', ');
+    }
+
+    totalRaw += ratio;
+    const isOk = (ratio === 1);
+    if(isOk) fullRight++;
+
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.add(isOk ? 'q-correct' : 'q-wrong');
+
+    const exp = document.getElementById(`qexp-${i}`);
+    exp.classList.remove('hidden');
+    exp.classList.add(isOk ? 'ok' : 'bad');
+    exp.innerHTML = (isOk
+      ? `✅ <b>Chính xác hoàn toàn!</b> Đáp án đúng: ${rightAns}`
+      : `❌ <b>Chưa chính xác (${Math.round(ratio*100)}%).</b> Em chọn: ${userAns}<br>👉 <b>Đáp án đúng:</b> ${rightAns}`)
+      + `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,.15)">💡 <b>Giảng giải:</b> ${esc(q.explain)}</div>`;
+
+    reviewHtml += `
+      <div class="review-item ${isOk?'ok':'bad'}">
+        <div><b>Câu ${i+1} (${LEVEL_LABEL[q.level]} – ${TYPE_LABEL[q.type]}):</b> ${esc(q.q)}</div>
+        <div style="margin-top:4px">${isOk ? '✅ Em làm đúng: '+rightAns : '❌ Em làm: '+userAns+'<br>👉 Đáp án đúng: '+rightAns}</div>
+        <div style="margin-top:4px;color:#334155">💡 <i>Giảng giải: ${esc(q.explain)}</i></div>
+      </div>
+    `;
+  });
+
+  progressState.quizDone = true;
+  progressState.quizRatio = totalRaw / totalQ;
+  const summary = updateDashboard();
+
+  const quizScore10 = Number((progressState.quizRatio * 10).toFixed(2));
+  let rankText = 'Chưa hoàn thành (CHT)';
+  let rankClass = 'rank-cht';
+  if(summary.totalScore10 >= 8){
+    rankText = 'Hoàn thành tốt (HTT)';
+    rankClass = 'rank-htt';
+  } else if(summary.totalScore10 >= 5){
+    rankText = 'Hoàn thành (HT)';
+    rankClass = 'rank-ht';
+  }
+
+  const resBox = document.getElementById('quiz-result');
+  resBox.classList.remove('hidden');
+  resBox.innerHTML = `
+    <div style="background:#f8fafc;border:2px solid #bfdbfe;border-radius:14px;padding:18px">
+      <h2 style="margin:0 0 10px">🏆 Bảng tổng kết đánh giá toàn bài học của em</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px">
+        <div style="background:#eff6ff;padding:10px 12px;border-radius:10px;border:1px solid #bfdbfe">
+          <div style="font-size:13px;color:#1e40af;font-weight:700">Tiến độ tương tác toàn bài</div>
+          <div style="font-size:20px;font-weight:800;color:#1d4ed8">${summary.totalPct}%</div>
+        </div>
+        <div style="background:#fffbeb;padding:10px 12px;border-radius:10px;border:1px solid #fde68a">
+          <div style="font-size:13px;color:#92400e;font-weight:700">Điểm tương tác (Chặng 1–3)</div>
+          <div style="font-size:20px;font-weight:800;color:#b45309">${summary.interScore5.toFixed(2)} / 5.0</div>
+        </div>
+        <div style="background:#faf5ff;padding:10px 12px;border-radius:10px;border:1px solid #e9d5ff">
+          <div style="font-size:13px;color:#6b21a8;font-weight:700">Điểm trắc nghiệm (${fullRight}/${totalQ} câu)</div>
+          <div style="font-size:20px;font-weight:800;color:#7e22ce">${summary.quizScore5.toFixed(2)} / 5.0 <small style="font-size:13px">(${quizScore10}/10)</small></div>
+        </div>
+        <div style="background:#f0fdf4;padding:10px 12px;border-radius:10px;border:1px solid #bbf7d0">
+          <div style="font-size:13px;color:#166534;font-weight:700">TỔNG ĐIỂM TOÀN BÀI</div>
+          <div style="font-size:22px;font-weight:800;color:#15803d">${summary.totalScore10.toFixed(2)} / 10</div>
+        </div>
+      </div>
+      <p style="margin:6px 0">Mức đánh giá chung: <span class="rank-pill ${rankClass}">${rankText}</span></p>
+      <p id="send-status" style="margin:8px 0 12px;color:#0f766e;font-weight:700">⏳ Đang gửi điểm tương tác, điểm trắc nghiệm và % hoàn thành về Google Sheets của giáo viên...</p>
+      <button class="btn btn-outline btn-sm" onclick="resetQuiz()">🔄 Làm lượt trắc nghiệm mới (giữ nguyên % tương tác bài giảng)</button>
+    </div>
+    ${reviewHtml}
+  `;
+  resBox.scrollIntoView({behavior:'smooth'});
+
+  const payload = {
+    hoTen: document.getElementById('stu-name').value.trim(),
+    lop: document.getElementById('stu-class').value.trim(),
+    tracNghiem: summary.quizScore5,
+    tuLuan: summary.interScore5,
+    tongDiem: summary.totalScore10,
+    tienDoTuongTac: summary.totalPct + '%',
+    baiKiemTra: `Tin học 4 KNTT - Bài 6 (Tương tác ${summary.totalPct}%: ${summary.interScore5}đ + Trắc nghiệm: ${summary.quizScore5}đ)`,
+    monHoc: 'Tin học 4',
+    soCauDung: fullRight
+  };
+
+  try{
+    await fetch(ENDPOINT,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
+    });
+    document.getElementById('send-status').textContent = '✅ Đã gửi đầy đủ điểm tương tác, điểm trắc nghiệm và % tiến độ về Google Sheets của giáo viên!';
+  } catch(e){
+    document.getElementById('send-status').textContent = '⚠️ Không gửi được điểm qua mạng. Em hãy kiểm tra Internet và báo giáo viên nhé.';
+  }
+}
+
+function resetQuiz(){
+  document.getElementById('stu-name').disabled = false;
+  document.getElementById('stu-class').disabled = false;
+  document.getElementById('btn-start-quiz').disabled = false;
+  document.getElementById('btn-submit-quiz').disabled = false;
+  document.getElementById('quiz-work').classList.add('hidden');
+  document.getElementById('quiz-result').classList.add('hidden');
+}
+
+updateDashboard();
+</script>
+</body>
+</html>
